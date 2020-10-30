@@ -22,18 +22,32 @@ router.get("/", (req, res, next) => {
 });
 
 //  GET the Book Details page in order to add a new Book
-router.get("/details", (req, res, next) => {
+router.get("/detailsAdd", (req, res, next) => {
   /*****************
    * ADD CODE HERE *
    *****************/
-  res.render("books/details", { title: "Add Book" });
+  res.render("books/detailsAdd", { title: "Add Book" });
 });
 
 // POST process the Book Details page and create a new Book - CREATE
-router.post("/add", (req, res, next) => {
+router.post("/detailsAdd", (req, res, next) => {
   /*****************
    * ADD CODE HERE *
    *****************/
+  let newBook = book({
+    Title: req.body.Title,
+    Price: req.body.Price,
+    Author: req.body.Author,
+    Genre: req.body.Genre,
+  });
+  book.create(newBook, (err, book) => {
+    if (err) {
+      console.log(err);
+      res.end(err);
+    } else {
+      res.redirect("/books");
+    }
+  });
 });
 
 // GET the Book Details page in order to edit an existing Book
@@ -49,7 +63,7 @@ router.get("/details/:id", (req, res, next) => {
       res.end(err);
     } else {
       //show the edit view
-      res.render("/details", { title: "Edit Book", books: bookToEdit });
+      res.render("books/details", { title: "Edit Book", books: bookToEdit });
     }
   });
 });
@@ -85,7 +99,7 @@ router.get("/delete/:id", (req, res, next) => {
    * ADD CODE HERE *
    *****************/
   let id = req.params.id;
-  Book.remove({ _id: id }, (err) => {
+  book.remove({ _id: id }, (err) => {
     if (err) {
       console.log(err);
       res.end(err);
